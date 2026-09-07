@@ -1,0 +1,32 @@
+{
+  "1239257449": "player",
+  "1517445369": "player",
+  "1517213945": "player",
+  "1239982041": "player",
+  "1809156841": "player",
+  "0755599857": {
+    "type": "task",
+    "era": 1,
+    "name": "Indus Valley Civilization"
+  },
+  "0756668817": {
+    "type": "task",
+    "era": 2,
+    "name": "Mauryan Empire"
+  },
+  "0756314881": {
+    "type": "task",
+    "era": 3,
+    "name": "Gupta Empire"
+  },
+  "0756451857": {
+    "type": "task",
+    "era": 4,
+    "name": "Chola Empire"
+  },
+  "0756706257": {
+    "type": "task",
+    "era": 5,
+    "name": "Vijayanagara Empire"
+  }
+}

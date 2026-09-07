@@ -1,0 +1,992 @@
+{
+  "game": {
+    "name": "Bharat Through the Ages",
+    "content": "Task Card Decks",
+    "total_cards": 75,
+    "cards_per_era": 15,
+    "rule": "When a player lands on a TASK zone, draw one card from the corresponding era's deck and perform the action.",
+    "movement_rule": "Movement follows the direction of the arrows on the board.",
+    "currency": "Indian Rupees (₹)"
+  },
+  "eras": [
+    {
+      "id": 1,
+      "name": "Indus Valley Civilization",
+      "theme": null,
+      "cards": [
+        {
+          "id": 1,
+          "title": "The Great Bath",
+          "description": "Take a ceremonial bath before continuing your journey.",
+          "effect": {
+            "type": "move",
+            "spaces": 2,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Harappan Merchant",
+          "description": "Your trade goods sell for a great price.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Well-Planned City",
+          "description": "Your efficient city saves construction costs.",
+          "effect": {
+            "type": "collect",
+            "amount": 150,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Bull Seal",
+          "description": "Your seal becomes highly valuable to merchants.",
+          "effect": {
+            "type": "collect",
+            "amount": 100,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 5,
+          "title": "River Trade",
+          "description": "Your boat reaches the next trading settlement.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 6,
+          "title": "Lost Caravan",
+          "description": "Your caravan takes a wrong route.",
+          "effect": {
+            "type": "move",
+            "spaces": 2,
+            "direction": "backward"
+          }
+        },
+        {
+          "id": 7,
+          "title": "Broken Drainage",
+          "description": "A blocked drainage system causes trouble.",
+          "effect": {
+            "type": "pay",
+            "amount": 150,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 8,
+          "title": "Failed Harvest",
+          "description": "The year's harvest is poor.",
+          "effect": {
+            "type": "pay",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 9,
+          "title": "Cracked Pottery",
+          "description": "Your valuable pottery shipment breaks.",
+          "effect": {
+            "type": "pay",
+            "amount": 100,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 10,
+          "title": "Flooded Settlement",
+          "description": "Floodwater forces you to evacuate.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "backward"
+          }
+        },
+        {
+          "id": 11,
+          "title": "Master Craftsman",
+          "description": "Your craftsmanship attracts wealthy traders.",
+          "effect": {
+            "type": "collect",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 12,
+          "title": "Trading Expedition",
+          "description": "Take a chance on a distant trade route. Roll a die.",
+          "effect": {
+            "type": "dice",
+            "die": "d6",
+            "outcomes": [
+              {
+                "roll": "4-6",
+                "action": "collect",
+                "amount": 300,
+                "currency": "INR"
+              },
+              {
+                "roll": "1-3",
+                "action": "pay",
+                "amount": 100,
+                "currency": "INR"
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "title": "Granary Supplies",
+          "description": "Your well-stocked granary helps the settlement.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "collect",
+                "amount": 150,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 1,
+                "direction": "forward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 14,
+          "title": "Archaeological Mystery",
+          "description": "You spend time searching for a lost artifact.",
+          "effect": {
+            "type": "skip_turn",
+            "turns": 1
+          }
+        },
+        {
+          "id": 15,
+          "title": "Prosperous Harappa",
+          "description": "Your settlement enters a period of prosperity.",
+          "effect": {
+            "type": "choice",
+            "options": [
+              {
+                "type": "collect",
+                "amount": 300,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 3,
+                "direction": "forward"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Mauryan Empire",
+      "theme": null,
+      "cards": [
+        {
+          "id": 1,
+          "title": "Royal Messenger",
+          "description": "Deliver an imperial message successfully.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Ashoka's Blessing",
+          "description": "The emperor rewards your service.",
+          "effect": {
+            "type": "collect",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Imperial Trade",
+          "description": "Your goods travel safely across the empire.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Royal Road",
+          "description": "The imperial roads speed up your journey.",
+          "effect": {
+            "type": "move",
+            "spaces": 4,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 5,
+          "title": "Kautilya's Strategy",
+          "description": "You make a clever economic decision.",
+          "effect": {
+            "type": "collect",
+            "amount": 150,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 6,
+          "title": "Tax Collector",
+          "description": "The empire demands its due.",
+          "effect": {
+            "type": "pay",
+            "amount": 150,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 7,
+          "title": "Failed Campaign",
+          "description": "Your military campaign costs more than expected.",
+          "effect": {
+            "type": "pay",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 8,
+          "title": "Border Conflict",
+          "description": "You are forced to retreat.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "backward"
+          }
+        },
+        {
+          "id": 9,
+          "title": "Damaged Caravan",
+          "description": "Your merchant caravan loses part of its cargo.",
+          "effect": {
+            "type": "pay",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 10,
+          "title": "Royal Investigation",
+          "description": "You must remain in the capital while an investigation takes place.",
+          "effect": {
+            "type": "skip_turn",
+            "turns": 1
+          }
+        },
+        {
+          "id": 11,
+          "title": "Provincial Governor",
+          "description": "Your province becomes highly prosperous.",
+          "effect": {
+            "type": "collect",
+            "amount": 300,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 12,
+          "title": "Empire Expands",
+          "description": "Your territory expands rapidly.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "forward"
+              },
+              {
+                "type": "collect",
+                "amount": 100,
+                "currency": "INR"
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "title": "War Chest",
+          "description": "You discover unused funds in the imperial treasury.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 14,
+          "title": "Expensive Elephant Corps",
+          "description": "Maintaining the royal army becomes costly.",
+          "effect": {
+            "type": "pay",
+            "amount": 300,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 15,
+          "title": "Strategic Retreat",
+          "description": "You retreat temporarily and regroup.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "backward"
+              },
+              {
+                "type": "collect",
+                "amount": 250,
+                "currency": "INR"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Gupta Empire",
+      "theme": "Knowledge",
+      "cards": [
+        {
+          "id": 1,
+          "title": "Scholar's Discovery",
+          "description": "Your research attracts royal funding.",
+          "effect": {
+            "type": "collect",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Astronomer's Calculation",
+          "description": "Your accurate calculations help the kingdom.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Royal Patronage",
+          "description": "The court sponsors your work.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Golden Age",
+          "description": "Your region experiences a period of prosperity.",
+          "effect": {
+            "type": "collect",
+            "amount": 300,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 5,
+          "title": "Mathematical Breakthrough",
+          "description": "Your new calculation method saves resources.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "collect",
+                "amount": 150,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "forward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "title": "Ink Spill!",
+          "description": "Your important manuscript is damaged.",
+          "effect": {
+            "type": "pay",
+            "amount": 150,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 7,
+          "title": "Lost Manuscript",
+          "description": "A valuable manuscript disappears from your library.",
+          "effect": {
+            "type": "move",
+            "spaces": 2,
+            "direction": "backward"
+          }
+        },
+        {
+          "id": 8,
+          "title": "Failed Experiment",
+          "description": "Your experiment consumes expensive materials.",
+          "effect": {
+            "type": "pay",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 9,
+          "title": "Astronomer's Error",
+          "description": "An incorrect calculation delays your expedition.",
+          "effect": {
+            "type": "skip_turn",
+            "turns": 1
+          }
+        },
+        {
+          "id": 10,
+          "title": "Library Repairs",
+          "description": "Your library needs urgent repairs.",
+          "effect": {
+            "type": "pay",
+            "amount": 150,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 11,
+          "title": "Poet at Court",
+          "description": "Your literary work earns royal appreciation.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 12,
+          "title": "Teacher's Reward",
+          "description": "Your students successfully complete their studies.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "forward"
+              },
+              {
+                "type": "collect",
+                "amount": 100,
+                "currency": "INR"
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "title": "Merchant-Scholar",
+          "description": "Your knowledge helps you negotiate a better trade.",
+          "effect": {
+            "type": "collect",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 14,
+          "title": "Royal Examination",
+          "description": "You must spend time proving your knowledge. Roll a die.",
+          "effect": {
+            "type": "dice",
+            "die": "d6",
+            "outcomes": [
+              {
+                "roll": "4-6",
+                "action": "collect",
+                "amount": 250,
+                "currency": "INR"
+              },
+              {
+                "roll": "1-3",
+                "action": "pay",
+                "amount": 100,
+                "currency": "INR"
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "title": "The Great Debate",
+          "description": "Win a debate against a rival scholar.",
+          "effect": {
+            "type": "challenge",
+            "success": {
+              "type": "move",
+              "spaces": 4,
+              "direction": "forward"
+            },
+            "failure": {
+              "type": "move",
+              "spaces": 2,
+              "direction": "backward"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Chola Empire",
+      "theme": "Maritime Power",
+      "cards": [
+        {
+          "id": 1,
+          "title": "Favorable Winds",
+          "description": "Perfect winds fill your sails.",
+          "effect": {
+            "type": "move",
+            "spaces": 4,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Spice Merchant",
+          "description": "Your cargo sells for a fortune.",
+          "effect": {
+            "type": "collect",
+            "amount": 300,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Successful Voyage",
+          "description": "Your ship returns safely from overseas.",
+          "effect": {
+            "type": "collect",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Royal Shipyard",
+          "description": "The Chola navy provides you with a faster vessel.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 5,
+          "title": "Busy Port",
+          "description": "Your goods are in high demand.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 6,
+          "title": "Monsoon Storm",
+          "description": "A powerful storm damages your ship.",
+          "effect": {
+            "type": "pay",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 7,
+          "title": "Pirate Attack",
+          "description": "Pirates steal part of your cargo.",
+          "effect": {
+            "type": "pay",
+            "amount": 300,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 8,
+          "title": "Lost at Sea",
+          "description": "Your ship loses its route.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "backward"
+          }
+        },
+        {
+          "id": 9,
+          "title": "Damaged Ship",
+          "description": "Your vessel requires urgent repairs.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "pay",
+                "amount": 200,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 1,
+                "direction": "backward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 10,
+          "title": "Blocked Harbor",
+          "description": "You are forced to wait for the port to reopen.",
+          "effect": {
+            "type": "skip_turn",
+            "turns": 1
+          }
+        },
+        {
+          "id": 11,
+          "title": "Merchant Fleet",
+          "description": "Your fleet brings back valuable foreign goods.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "collect",
+                "amount": 250,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "forward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 12,
+          "title": "Treasure Cargo",
+          "description": "You discover a highly valuable shipment. Roll a die.",
+          "effect": {
+            "type": "dice",
+            "die": "d6",
+            "outcomes": [
+              {
+                "roll": "4-6",
+                "action": "collect",
+                "amount": 400,
+                "currency": "INR"
+              },
+              {
+                "roll": "1-3",
+                "action": "collect",
+                "amount": 50,
+                "currency": "INR"
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "title": "Tailwind Trade Route",
+          "description": "Your ship completes the journey unusually quickly.",
+          "effect": {
+            "type": "move",
+            "spaces": 5,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 14,
+          "title": "Shipwreck",
+          "description": "Part of your fleet is lost at sea.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "pay",
+                "amount": 350,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "backward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "title": "Master Navigator",
+          "description": "Your navigation skills save the voyage.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "collect",
+                "amount": 150,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 3,
+                "direction": "forward"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Vijayanagara Empire",
+      "theme": "Culture & Architecture",
+      "cards": [
+        {
+          "id": 1,
+          "title": "Grand Bazaar",
+          "description": "Your goods attract merchants from across the empire.",
+          "effect": {
+            "type": "collect",
+            "amount": 300,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 2,
+          "title": "Royal Patronage",
+          "description": "The king rewards your contribution to the arts.",
+          "effect": {
+            "type": "collect",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 3,
+          "title": "Temple Festival",
+          "description": "Thousands of visitors arrive for the festival.",
+          "effect": {
+            "type": "collect",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 4,
+          "title": "Master Architect",
+          "description": "Your architectural skills earn you a royal commission.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 5,
+          "title": "Hampi Prosperity",
+          "description": "Your business thrives in the capital.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "collect",
+                "amount": 250,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "forward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "title": "Market Fire",
+          "description": "A fire destroys part of your merchandise.",
+          "effect": {
+            "type": "pay",
+            "amount": 250,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 7,
+          "title": "Damaged Temple Project",
+          "description": "Construction costs unexpectedly rise.",
+          "effect": {
+            "type": "pay",
+            "amount": 200,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 8,
+          "title": "Empty Treasury",
+          "description": "The royal treasury delays your payment.",
+          "effect": {
+            "type": "pay",
+            "amount": 100,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 9,
+          "title": "Enemy Threat",
+          "description": "You retreat from an approaching enemy force.",
+          "effect": {
+            "type": "move",
+            "spaces": 3,
+            "direction": "backward"
+          }
+        },
+        {
+          "id": 10,
+          "title": "Siege Preparations",
+          "description": "The city prepares for conflict.",
+          "effect": {
+            "type": "skip_turn",
+            "turns": 1
+          }
+        },
+        {
+          "id": 11,
+          "title": "Diamond Merchant",
+          "description": "Your valuable goods are sold at a premium.",
+          "effect": {
+            "type": "collect",
+            "amount": 350,
+            "currency": "INR"
+          }
+        },
+        {
+          "id": 12,
+          "title": "Royal Commission",
+          "description": "You receive a prestigious construction contract. Roll a die.",
+          "effect": {
+            "type": "dice",
+            "die": "d6",
+            "outcomes": [
+              {
+                "roll": "4-6",
+                "action": "collect",
+                "amount": 400,
+                "currency": "INR"
+              },
+              {
+                "roll": "1-3",
+                "action": "pay",
+                "amount": 100,
+                "currency": "INR"
+              }
+            ]
+          }
+        },
+        {
+          "id": 13,
+          "title": "Festival Procession",
+          "description": "Join the procession and celebrate with the city.",
+          "effect": {
+            "type": "move",
+            "spaces": 4,
+            "direction": "forward"
+          }
+        },
+        {
+          "id": 14,
+          "title": "Collapsed Structure",
+          "description": "A structure you're building collapses and must be rebuilt.",
+          "effect": {
+            "type": "multiple",
+            "actions": [
+              {
+                "type": "pay",
+                "amount": 300,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 2,
+                "direction": "backward"
+              }
+            ]
+          }
+        },
+        {
+          "id": 15,
+          "title": "Prosperous Hampi",
+          "description": "Your business becomes one of the most successful in the capital.",
+          "effect": {
+            "type": "choice",
+            "options": [
+              {
+                "type": "collect",
+                "amount": 400,
+                "currency": "INR"
+              },
+              {
+                "type": "move",
+                "spaces": 5,
+                "direction": "forward"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "general_game_notes": [
+    "TASK zones trigger a card draw from the corresponding era's deck.",
+    "Cards can reward money, remove money, move the player, or affect their next turn.",
+    "For movement cards, move along the direction shown by the arrows on that mini-board.",
+    "For backward movement, continue backward along the same path.",
+    "For dice cards, use one standard six-sided die.",
+    "Cards with OR allow the player to choose one of the listed rewards.",
+    "Cards with If you fail should only be used when the game master gives the player the associated challenge."
+  ]
+}
