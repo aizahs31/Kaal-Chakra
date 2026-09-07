@@ -7,7 +7,20 @@
   "1517445369": {
     "name": "Lucifer",
     "score": 0,
-    "history": []
+    "history": [
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 11,
+        "title": "Master Craftsman",
+        "description": "Your craftsmanship attracts wealthy traders.",
+        "effect": {
+          "type": "collect",
+          "amount": 250,
+          "currency": "INR"
+        }
+      }
+    ]
   },
   "1517213945": {
     "name": "Saran",
@@ -21,6 +34,11 @@
   },
   "1809156841": {
     "name": "Gnanada",
+    "score": 0,
+    "history": []
+  },
+  "1240076969": {
+    "name": "ak",
     "score": 0,
     "history": []
   }

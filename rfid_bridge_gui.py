@@ -18,20 +18,6 @@ Files:
 """
 
 # ============================================================
-# TCL / TK FIX FOR THIS WINDOWS PYTHON INSTALLATION
-# ============================================================
-
-import os
-
-os.environ["TCL_LIBRARY"] = (
-    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tcl8.6"
-)
-
-os.environ["TK_LIBRARY"] = (
-    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tk8.6"
-)
-
-# ============================================================
 # IMPORTS
 # ============================================================
 
@@ -209,12 +195,12 @@ class GameDisplay:
             font=("Segoe UI", 12)
         )
 
-        # Keep it technically visible but unobtrusive.
+        # Keep the keyboard capture active without showing a text box.
         self.entry.place(
-            x=5,
-            y=5,
-            width=150,
-            height=25
+            x=-10,
+            y=-10,
+            width=1,
+            height=1
         )
 
         self.entry.bind(
@@ -388,74 +374,13 @@ class GameDisplay:
         # ----------------------------------------------------
 
         if uid not in self.cards:
-
-            # Disable RFID input while registration dialog
-            # is open.
-            self.entry.config(
-                state="disabled"
+            self.status_label.config(
+                text=f"Unknown card: {uid}"
             )
-
-            kind = simpledialog.askstring(
-                "New Card",
-                (
-                    f"Card UID:\n\n"
-                    f"{uid}\n\n"
-                    "Enter card type:\n"
-                    "player or task"
-                ),
-                parent=self.root
-            )
-
-            # Re-enable input.
-            self.entry.config(
-                state="normal"
-            )
-
-            # ------------------------------------------------
-            # User cancelled
-            # ------------------------------------------------
-
-            if kind is None:
-
-                self.status_label.config(
-                    text="Card registration cancelled"
-                )
-
-                return
-
-            kind = kind.strip().lower()
-
-            # ------------------------------------------------
-            # Validate type
-            # ------------------------------------------------
-
-            if kind.startswith("p"):
-
-                self.cards[uid] = "player"
-
-            elif kind.startswith("t"):
-
-                self.cards[uid] = "task"
-
-            else:
-
-                messagebox.showwarning(
-                    "Invalid Card Type",
-                    "Please enter either 'player' or 'task'.",
-                    parent=self.root
-                )
-
-                return
-
-            # Save card
-            save_json(
-                CARDS_FILE,
-                self.cards
-            )
-
             print(
-                f"Registered {uid} as {self.cards[uid]}"
+                f"Unknown card UID: {uid}. Add it to {CARDS_FILE.name}."
             )
+            return
 
         # ----------------------------------------------------
         # EXISTING CARD
