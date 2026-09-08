@@ -33,6 +33,16 @@ from pathlib import Path
 import serial
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 
+import os
+
+os.environ["TCL_LIBRARY"] = (
+    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tcl8.6"
+)
+
+os.environ["TK_LIBRARY"] = (
+    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tk8.6"
+)
+
 
 # ============================================================
 # CONFIGURATION
@@ -384,10 +394,14 @@ class GameDisplay:
 
     def draw_era_text(self, image):
         era = next(
-            (era_id for era_id, path in ERA_IMAGE_FILES.items()
-             if path == self.background_source),
+            (
+                era_id
+                for era_id, path in ERA_IMAGE_FILES.items()
+                if path == self.background_source
+            ),
             None
         )
+
         if era is None:
             return
 
@@ -395,79 +409,112 @@ class GameDisplay:
         draw = ImageDraw.Draw(image)
         colors = ERA_TEXT_COLORS[era]
 
-        if self.era_name:
-            era_font = self.fit_font(
-                self.era_name,
-                "georgiab.ttf",
-                max(45, image_width // 42),
-                round(image_width * 0.55)
-            )
-            draw.text(
-                (round(image_width * 0.50), round(image_height * -0.006)),
-                self.era_name,
-                font=era_font,
-                fill=colors["header"],
-                anchor="ma"
-            )
+        # ============================================================
+        # PANEL CENTERS
+        # ============================================================
+
+        left_x = round(image_width * 0.17)
+        center_x = round(image_width * 0.50)
+        right_x = round(image_width * 0.83)
+
+        # ============================================================
+        # PLAYER NAME — LEFT PANEL
+        # ============================================================
 
         if self.player_text is not None:
             name, score = self.player_text
+
             name_font = self.fit_font(
                 name,
                 "georgiab.ttf",
-                max(42, image_width // 48),
-                round(image_width * 0.12)
+                max(40, image_width // 45),
+                round(image_width * 0.25)
             )
-            score_font = self.load_font("georgia.ttf", max(34, image_width // 72))
-            cloud_center_x = round(image_width * 0.50)
+
             draw.text(
-                (cloud_center_x, round(image_height * 0.26)),
+                (left_x, round(image_height * 0.52)),
                 name,
                 font=name_font,
                 fill=colors["cloud"],
-                anchor="ma"
+                anchor="mm"
             )
+
+        # ============================================================
+        # SCORE — RIGHT PANEL
+        # ============================================================
+
+            score_font = self.load_font(
+                "georgia.ttf",
+                max(30, image_width // 65)
+            )
+
             draw.text(
-                (cloud_center_x, round(image_height * 0.35)),
+                (right_x, round(image_height * 0.52)),
                 f"Score: {score}",
                 font=score_font,
                 fill=colors["cloud"],
-                anchor="ma"
+                anchor="mm"
             )
+
+        # ============================================================
+        # TASK — CENTER PANEL
+        # ============================================================
 
         if self.era_text is None:
             return
 
-        left = round(image_width * 0.13)
-        right = round(image_width * 0.87)
+        title, description = self.era_text
+
         title_font = self.fit_font(
-            self.era_text[0],
-            "georgiab.ttf",
-            max(22, round(image_width * 0.028)),
-            round(image_width * 0.63)
-        )
-        body_font = self.load_font("georgia.ttf", max(16, round(image_width * 0.018)))
-        title = textwrap.fill(self.era_text[0], width=30)
-        description = textwrap.fill(self.era_text[1], width=58)
-        draw.multiline_text(
-            ((left + right) // 2, round(image_height * 0.66)),
             title,
+            "georgiab.ttf",
+            max(26, round(image_width * 0.025)),
+            round(image_width * 0.40)
+        )
+
+        body_font = self.load_font(
+            "georgia.ttf",
+            max(17, round(image_width * 0.017))
+        )
+
+        # Wrap task text
+        wrapped_title = textwrap.fill(
+            title,
+            width=28
+        )
+
+        wrapped_description = textwrap.fill(
+            description,
+            width=42
+        )
+
+        # Task title
+        draw.multiline_text(
+            (
+                center_x,
+                round(image_height * 0.47)
+            ),
+            wrapped_title,
             font=title_font,
             fill=colors["task"],
             anchor="ma",
             align="center",
             spacing=8
         )
+
+        # Task description
         draw.multiline_text(
-            ((left + right) // 2, round(image_height * 0.75)),
-            description,
+            (
+                center_x,
+                round(image_height * 0.59)
+            ),
+            wrapped_description,
             font=body_font,
             fill=colors["task"],
             anchor="ma",
             align="center",
             spacing=6
         )
-
     @staticmethod
     def load_font(filename, size):
         try:
