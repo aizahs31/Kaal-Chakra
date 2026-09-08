@@ -30,18 +30,11 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 from pathlib import Path
 
-import serial
+try:
+    import serial
+except ModuleNotFoundError:
+    serial = None
 from PIL import Image, ImageDraw, ImageFont, ImageTk
-
-import os
-
-os.environ["TCL_LIBRARY"] = (
-    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tcl8.6"
-)
-
-os.environ["TK_LIBRARY"] = (
-    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tk8.6"
-)
 
 
 # ============================================================
@@ -62,11 +55,13 @@ ERA_IMAGE_FILES = {
     5: Path("era_images/Vijayanagar Empire.png"),
 }
 ERA_TEXT_COLORS = {
-    1: {"header": "#a26431", "cloud": "#f4dfba", "task": "#a26431"},
-    2: {"header": "#dbe6f5", "cloud": "#333657", "task": "#dbe6f5"},
-    3: {"header": "#dcebd6", "cloud": "#325c2a", "task": "#dcebd6"},
-    4: {"header": "#e1bc84", "cloud": "#532116", "task": "#e1bc84"},
-    5: {"header": "#4a4a4a", "cloud": "#f1f1f1", "task": "#4a4a4a"},
+    # Name and score use the contrast seen in the Mauryan reference:
+    # dark text on light panels, light text on dark panels.
+    1: {"header": "#532116", "cloud": "#f4dfba", "task": "#532116"},
+    2: {"header": "#333657", "cloud": "#333657", "task": "#f1f4fa"},
+    3: {"header": "#f4e56b", "cloud": "#f4e56b", "task": "#eff7e9"},
+    4: {"header": "#e1bc84", "cloud": "#e1bc84", "task": "#e1bc84"},
+    5: {"header": "#f1f1f1", "cloud": "#f1f1f1", "task": "#f1f1f1"},
 }
 
 # ============================================================
@@ -545,6 +540,12 @@ class GameDisplay:
     # ========================================================
 
     def connect_arduino(self):
+
+        if serial is None:
+            print(
+                "pyserial is not installed; continuing WITHOUT Arduino connection."
+            )
+            return None
 
         try:
 

@@ -330,6 +330,101 @@
             }
           ]
         }
+      },
+      {
+        "era": 3,
+        "era_name": "Gupta Empire",
+        "card_id": 14,
+        "title": "Royal Examination",
+        "description": "You must spend time proving your knowledge. Roll a die.",
+        "effect": {
+          "type": "dice",
+          "die": "d6",
+          "outcomes": [
+            {
+              "roll": "4-6",
+              "action": "collect",
+              "amount": 250,
+              "currency": "INR"
+            },
+            {
+              "roll": "1-3",
+              "action": "pay",
+              "amount": 100,
+              "currency": "INR"
+            }
+          ]
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 14,
+        "title": "Archaeological Mystery",
+        "description": "You spend time searching for a lost artifact.",
+        "effect": {
+          "type": "skip_turn",
+          "turns": 1
+        }
+      },
+      {
+        "era": 2,
+        "era_name": "Mauryan Empire",
+        "card_id": 14,
+        "title": "Expensive Elephant Corps",
+        "description": "Maintaining the royal army becomes costly.",
+        "effect": {
+          "type": "pay",
+          "amount": 300,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 4,
+        "era_name": "Chola Empire",
+        "card_id": 3,
+        "title": "Successful Voyage",
+        "description": "Your ship returns safely from overseas.",
+        "effect": {
+          "type": "collect",
+          "amount": 250,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 5,
+        "era_name": "Vijayanagara Empire",
+        "card_id": 8,
+        "title": "Empty Treasury",
+        "description": "The royal treasury delays your payment.",
+        "effect": {
+          "type": "pay",
+          "amount": 100,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 4,
+        "era_name": "Chola Empire",
+        "card_id": 10,
+        "title": "Blocked Harbor",
+        "description": "You are forced to wait for the port to reopen.",
+        "effect": {
+          "type": "skip_turn",
+          "turns": 1
+        }
+      },
+      {
+        "era": 4,
+        "era_name": "Chola Empire",
+        "card_id": 2,
+        "title": "Spice Merchant",
+        "description": "Your cargo sells for a fortune.",
+        "effect": {
+          "type": "collect",
+          "amount": 300,
+          "currency": "INR"
+        }
       }
     ]
   },
