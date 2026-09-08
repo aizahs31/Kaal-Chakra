@@ -25,12 +25,13 @@ import json
 import random
 import threading
 import time
+import textwrap
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 from pathlib import Path
 
 import serial
-from PIL import Image, ImageTk
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 
 # ============================================================
@@ -126,6 +127,10 @@ class GameDisplay:
 
         self.background_image = None
         self.background_source = None
+        self.background_display_size = (0, 0)
+        self.background_offset = (0, 0)
+        self.era_text = None
+        self.player_text = None
         self.background_label = tk.Label(root, bg="#0d1628")
         self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
         self.background_label.lower()
@@ -336,11 +341,22 @@ class GameDisplay:
             return
 
         self.background_source = image_path
+        self.era_text = None
+        if era == 1:
+            self.player_label.pack_forget()
+            self.score_label.pack_forget()
+        else:
+            if not self.player_label.winfo_ismapped():
+                self.player_label.pack(pady=10)
+            if not self.score_label.winfo_ismapped():
+                self.score_label.pack()
         self.resize_background()
 
     def clear_era_background(self):
         self.background_source = None
         self.background_image = None
+        self.era_text = None
+        self.player_text = None
         self.background_label.config(image="", bg="#0d1628")
 
     def hide_welcome_screen(self):
@@ -356,19 +372,106 @@ class GameDisplay:
             height = max(self.root.winfo_height(), 1)
             image = Image.open(self.background_source).convert("RGB")
 
-            scale = max(width / image.width, height / image.height)
+            scale = min(width / image.width, height / image.height)
             size = (round(image.width * scale), round(image.height * scale))
             image = image.resize(size, Image.Resampling.LANCZOS)
 
-            left = (image.width - width) // 2
-            top = (image.height - height) // 2
-            image = image.crop((left, top, left + width, top + height))
+            left = (width - image.width) // 2
+            top = (height - image.height) // 2
+            self.background_display_size = (image.width, image.height)
+            self.background_offset = (left, top)
+            self.draw_era_text(image)
 
             self.background_image = ImageTk.PhotoImage(image)
             self.background_label.config(image=self.background_image)
 
         except (OSError, tk.TclError) as error:
             print(f"Could not display background image: {error}")
+
+    def draw_era_text(self, image):
+        if self.background_source != ERA_IMAGE_FILES[1]:
+            return
+
+        image_width, image_height = image.size
+        draw = ImageDraw.Draw(image)
+
+        if self.player_text is not None:
+            name, score = self.player_text
+            name_font = self.fit_font(
+                name,
+                "georgiab.ttf",
+                max(70, image_width // 32),
+                round(image_width * 0.16)
+            )
+            score_font = self.load_font("georgia.ttf", max(34, image_width // 72))
+            cloud_center_x = round(image_width * 0.50)
+            draw.text(
+                (cloud_center_x, round(image_height * 0.23)),
+                name,
+                font=name_font,
+                fill="#f4dfba",
+                anchor="ma"
+            )
+            draw.text(
+                (cloud_center_x, round(image_height * 0.35)),
+                f"Score: {score}",
+                font=score_font,
+                fill="#f4dfba",
+                anchor="ma"
+            )
+
+        if self.era_text is None:
+            return
+
+        left = round(image_width * 0.51)
+        right = round(image_width * 0.94)
+        title_font = self.load_font("georgiab.ttf", max(22, round(image_width * 0.035)))
+        body_font = self.load_font("georgia.ttf", max(16, round(image_width * 0.021)))
+        title = textwrap.fill(self.era_text[0], width=22)
+        description = textwrap.fill(self.era_text[1], width=38)
+        draw.multiline_text(
+            ((left + right) // 2, round(image_height * 0.27)),
+            title,
+            font=title_font,
+            fill="#e1bc84",
+            anchor="ma",
+            align="center",
+            spacing=8
+        )
+        draw.multiline_text(
+            ((left + right) // 2, round(image_height * 0.43)),
+            description,
+            font=body_font,
+            fill="#f4dfba",
+            anchor="ma",
+            align="center",
+            spacing=6
+        )
+
+    @staticmethod
+    def load_font(filename, size):
+        try:
+            return ImageFont.truetype(Path("C:/Windows/Fonts") / filename, size)
+        except OSError:
+            return ImageFont.load_default()
+
+    @staticmethod
+    def fit_font(text, filename, starting_size, max_width):
+        size = starting_size
+        while size > 40:
+            font = GameDisplay.load_font(filename, size)
+            if font.getbbox(text)[2] <= max_width:
+                return font
+            size -= 8
+        return GameDisplay.load_font(filename, 40)
+
+    def show_task_text(self, title, description):
+        self.era_text = (title, description)
+        self.resize_background()
+
+    def show_player_text(self, name, score):
+        self.player_text = (name, score)
+        self.resize_background()
 
     # ========================================================
     # ARDUINO CONNECTION
@@ -626,6 +729,8 @@ class GameDisplay:
             text=f"Score: {player['score']}"
         )
 
+        self.show_player_text(player["name"], player["score"])
+
         self.task_label.config(
             text=""
         )
@@ -781,9 +886,10 @@ class GameDisplay:
         )
 
         self.set_era_background(era)
+        self.show_task_text(title, description)
 
         self.task_label.config(
-            text=task_text
+            text="" if era == 1 else task_text
         )
 
         # --------------------------------------------------------
