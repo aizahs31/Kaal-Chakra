@@ -18,20 +18,6 @@ Files:
 """
 
 # ============================================================
-# TCL / TK FIX FOR THIS WINDOWS PYTHON INSTALLATION
-# ============================================================
-
-import os
-
-os.environ["TCL_LIBRARY"] = (
-    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tcl8.6"
-)
-
-os.environ["TK_LIBRARY"] = (
-    r"C:\Users\Shazia\AppData\Local\Programs\Python\Python313\tcl\tk8.6"
-)
-
-# ============================================================
 # IMPORTS
 # ============================================================
 
@@ -39,11 +25,13 @@ import json
 import random
 import threading
 import time
+import textwrap
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 from pathlib import Path
 
 import serial
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 
 
 # ============================================================
@@ -56,6 +44,20 @@ BAUD_RATE = 9600
 PLAYERS_FILE = Path("players.json")
 CARDS_FILE = Path("cards.json")
 TASK_DECK_FILE = Path("task_cards.json")
+ERA_IMAGE_FILES = {
+    1: Path("era_images/Indus Valley.png"),
+    2: Path("era_images/Mauryan Empire.png"),
+    3: Path("era_images/Gupta Empire.png"),
+    4: Path("era_images/Chola Empire.png"),
+    5: Path("era_images/Vijayanagar Empire.png"),
+}
+ERA_TEXT_COLORS = {
+    1: {"header": "#a26431", "cloud": "#f4dfba", "task": "#a26431"},
+    2: {"header": "#dbe6f5", "cloud": "#333657", "task": "#dbe6f5"},
+    3: {"header": "#dcebd6", "cloud": "#325c2a", "task": "#dcebd6"},
+    4: {"header": "#e1bc84", "cloud": "#532116", "task": "#e1bc84"},
+    5: {"header": "#4a4a4a", "cloud": "#f1f1f1", "task": "#4a4a4a"},
+}
 
 # ============================================================
 # TASK DECK
@@ -114,6 +116,9 @@ class GameDisplay:
         self.era_decks = {}
 
         self.last_player_uid = None
+        self.scanner_buffer = ""
+        self.scanner_enabled = True
+        self.era_name = None
 
         # Prevent multiple RFID scans from being processed
         # simultaneously.
@@ -127,8 +132,92 @@ class GameDisplay:
         # ----------------------------------------------------
 
         root.title("Kaal-Chakra")
-        root.configure(bg="#2e2e1a")
-        root.geometry("900x500")
+        root.configure(bg="#0d1628")
+        root.geometry("1000x650")
+
+        self.background_image = None
+        self.background_source = None
+        self.background_display_size = (0, 0)
+        self.background_offset = (0, 0)
+        self.era_text = None
+        self.player_text = None
+        self.background_label = tk.Label(root, bg="#0d1628")
+        self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.background_label.lower()
+        root.bind("<Configure>", self.resize_background)
+
+        # ----------------------------------------------------
+        # Default welcome screen
+        # ----------------------------------------------------
+
+        self.welcome_frame = tk.Frame(
+            root,
+            bg="#111d33",
+            highlightbackground="#c8974b",
+            highlightthickness=1
+        )
+        self.welcome_frame.pack(
+            fill="x",
+            padx=150,
+            pady=(55, 25)
+        )
+
+        tk.Label(
+            self.welcome_frame,
+            text="KAAL-CHAKRA",
+            font=("Georgia", 32, "bold"),
+            fg="#e7bd72",
+            bg="#111d33"
+        ).pack(pady=(28, 2))
+
+        tk.Label(
+            self.welcome_frame,
+            text="BHARAT THROUGH THE AGES",
+            font=("Segoe UI", 11, "bold"),
+            fg="#9fb6c9",
+            bg="#111d33"
+        ).pack()
+
+        tk.Frame(
+            self.welcome_frame,
+            height=1,
+            bg="#6e4b2d"
+        ).pack(fill="x", padx=80, pady=20)
+
+        tk.Label(
+            self.welcome_frame,
+            text="Your journey through history begins here",
+            font=("Georgia", 18, "italic"),
+            fg="#f2e4c7",
+            bg="#111d33"
+        ).pack()
+
+        steps = tk.Frame(self.welcome_frame, bg="#111d33")
+        steps.pack(pady=(22, 28))
+
+        for number, text in (
+            ("1", "Scan your player card"),
+            ("2", "Scan the era card"),
+            ("3", "Complete your task"),
+        ):
+            tk.Label(
+                steps,
+                text=f"{number}  {text}",
+                font=("Segoe UI", 12),
+                fg="#d6c5a5",
+                bg="#111d33",
+                anchor="w",
+                width=25
+            ).pack(side="left", padx=8)
+
+        self.welcome_footer = tk.Label(
+            root,
+            text="RFID READY  •  A NEW CHAPTER AWAITS",
+            font=("Segoe UI", 10, "bold"),
+            fg="#7188a1",
+            bg="#0d1628"
+        )
+        self.welcome_footer.pack(pady=(0, 22))
 
         # ----------------------------------------------------
         # Status
@@ -136,10 +225,10 @@ class GameDisplay:
 
         self.status_label = tk.Label(
             root,
-            text="Scan a player card to begin",
-            font=("Segoe UI", 22),
-            fg="#eaeaea",
-            bg="#1a1a2e"
+            text="Awaiting player card",
+            font=("Segoe UI", 20, "bold"),
+            fg="#f2e4c7",
+            bg="#111d33"
         )
 
         self.status_label.pack(pady=(60, 10))
@@ -151,9 +240,9 @@ class GameDisplay:
         self.player_label = tk.Label(
             root,
             text="",
-            font=("Segoe UI", 48, "bold"),
-            fg="#f5c518",
-            bg="#1a1a2e"
+            font=("Georgia", 42, "bold"),
+            fg="#e7bd72",
+            bg="#111d33"
         )
 
         self.player_label.pack(pady=10)
@@ -165,9 +254,9 @@ class GameDisplay:
         self.score_label = tk.Label(
             root,
             text="",
-            font=("Segoe UI", 20),
-            fg="#aaaaaa",
-            bg="#1a1a2e"
+            font=("Segoe UI", 16),
+            fg="#b9c8d4",
+            bg="#111d33"
         )
 
         self.score_label.pack()
@@ -179,48 +268,18 @@ class GameDisplay:
         self.task_label = tk.Label(
             root,
             text="",
-            font=("Segoe UI", 26),
-            fg="#4ade80",
-            bg="#1a1a2e",
+            font=("Georgia", 22),
+            fg="#e7bd72",
+            bg="#111d33",
             wraplength=800,
             justify="center"
         )
 
         self.task_label.pack(pady=40)
 
-        # ----------------------------------------------------
-        # RFID input
-        # ----------------------------------------------------
-        #
-        # The RFID reader behaves like a keyboard.
-        #
-        # Example:
-        #
-        #   RFID scans:
-        #       0755599857
-        #
-        #   Reader sends:
-        #       0755599857 + Enter
-        #
-        # ----------------------------------------------------
-
-        self.entry = tk.Entry(
-            root,
-            font=("Segoe UI", 12)
-        )
-
-        # Keep it technically visible but unobtrusive.
-        self.entry.place(
-            x=5,
-            y=5,
-            width=150,
-            height=25
-        )
-
-        self.entry.bind(
-            "<Return>",
-            self.on_scan
-        )
+        # RFID readers act like keyboards, so capture their UID globally
+        # without creating a visible input widget.
+        root.bind_all("<KeyPress>", self.on_keypress)
 
         # Initial focus
         self.root.after(
@@ -244,12 +303,195 @@ class GameDisplay:
     def focus_scanner(self):
 
         try:
-            self.entry.config(state="normal")
-            self.entry.focus_set()
-            self.entry.icursor(tk.END)
+            self.root.focus_force()
 
         except tk.TclError:
             pass
+
+    def on_keypress(self, event):
+        if not self.scanner_enabled:
+            return
+
+        if event.keysym == "Return":
+            uid = self.scanner_buffer
+            self.scanner_buffer = ""
+            self.on_scan(uid=uid)
+        elif event.char and event.char.isprintable():
+            self.scanner_buffer += event.char
+
+    def set_era_background(self, era):
+        image_path = ERA_IMAGE_FILES.get(era)
+
+        if image_path is None or not image_path.exists():
+            self.background_source = None
+            self.background_image = None
+            self.background_label.config(image="", bg="#0d1628")
+            print(f"No background image found for era {era}: {image_path}")
+            return
+
+        self.background_source = image_path
+        self.era_text = None
+        self.era_name = next(
+            (
+                card.get("name")
+                for card in self.cards.values()
+                if isinstance(card, dict) and card.get("era") == era
+            ),
+            None
+        )
+        self.status_label.pack_forget()
+        self.player_label.pack_forget()
+        self.score_label.pack_forget()
+        self.task_label.pack_forget()
+        self.resize_background()
+
+    def clear_era_background(self):
+        self.background_source = None
+        self.background_image = None
+        self.era_text = None
+        self.player_text = None
+        self.era_name = None
+        self.background_label.config(image="", bg="#0d1628")
+
+    def hide_welcome_screen(self):
+        self.welcome_frame.pack_forget()
+        self.welcome_footer.pack_forget()
+
+    def resize_background(self, event=None):
+        if self.background_source is None:
+            return
+
+        try:
+            width = max(self.root.winfo_width(), 1)
+            height = max(self.root.winfo_height(), 1)
+            image = Image.open(self.background_source).convert("RGB")
+
+            scale = min(width / image.width, height / image.height)
+            size = (round(image.width * scale), round(image.height * scale))
+            image = image.resize(size, Image.Resampling.LANCZOS)
+
+            left = (width - image.width) // 2
+            top = (height - image.height) // 2
+            self.background_display_size = (image.width, image.height)
+            self.background_offset = (left, top)
+            self.draw_era_text(image)
+
+            self.background_image = ImageTk.PhotoImage(image)
+            self.background_label.config(image=self.background_image)
+
+        except (OSError, tk.TclError) as error:
+            print(f"Could not display background image: {error}")
+
+    def draw_era_text(self, image):
+        era = next(
+            (era_id for era_id, path in ERA_IMAGE_FILES.items()
+             if path == self.background_source),
+            None
+        )
+        if era is None:
+            return
+
+        image_width, image_height = image.size
+        draw = ImageDraw.Draw(image)
+        colors = ERA_TEXT_COLORS[era]
+
+        if self.era_name:
+            era_font = self.fit_font(
+                self.era_name,
+                "georgiab.ttf",
+                max(45, image_width // 42),
+                round(image_width * 0.55)
+            )
+            draw.text(
+                (round(image_width * 0.50), round(image_height * -0.006)),
+                self.era_name,
+                font=era_font,
+                fill=colors["header"],
+                anchor="ma"
+            )
+
+        if self.player_text is not None:
+            name, score = self.player_text
+            name_font = self.fit_font(
+                name,
+                "georgiab.ttf",
+                max(42, image_width // 48),
+                round(image_width * 0.12)
+            )
+            score_font = self.load_font("georgia.ttf", max(34, image_width // 72))
+            cloud_center_x = round(image_width * 0.50)
+            draw.text(
+                (cloud_center_x, round(image_height * 0.26)),
+                name,
+                font=name_font,
+                fill=colors["cloud"],
+                anchor="ma"
+            )
+            draw.text(
+                (cloud_center_x, round(image_height * 0.35)),
+                f"Score: {score}",
+                font=score_font,
+                fill=colors["cloud"],
+                anchor="ma"
+            )
+
+        if self.era_text is None:
+            return
+
+        left = round(image_width * 0.13)
+        right = round(image_width * 0.87)
+        title_font = self.fit_font(
+            self.era_text[0],
+            "georgiab.ttf",
+            max(22, round(image_width * 0.028)),
+            round(image_width * 0.63)
+        )
+        body_font = self.load_font("georgia.ttf", max(16, round(image_width * 0.018)))
+        title = textwrap.fill(self.era_text[0], width=30)
+        description = textwrap.fill(self.era_text[1], width=58)
+        draw.multiline_text(
+            ((left + right) // 2, round(image_height * 0.66)),
+            title,
+            font=title_font,
+            fill=colors["task"],
+            anchor="ma",
+            align="center",
+            spacing=8
+        )
+        draw.multiline_text(
+            ((left + right) // 2, round(image_height * 0.75)),
+            description,
+            font=body_font,
+            fill=colors["task"],
+            anchor="ma",
+            align="center",
+            spacing=6
+        )
+
+    @staticmethod
+    def load_font(filename, size):
+        try:
+            return ImageFont.truetype(Path("C:/Windows/Fonts") / filename, size)
+        except OSError:
+            return ImageFont.load_default()
+
+    @staticmethod
+    def fit_font(text, filename, starting_size, max_width):
+        size = starting_size
+        while size > 40:
+            font = GameDisplay.load_font(filename, size)
+            if font.getbbox(text)[2] <= max_width:
+                return font
+            size -= 8
+        return GameDisplay.load_font(filename, 40)
+
+    def show_task_text(self, title, description):
+        self.era_text = (title, description)
+        self.resize_background()
+
+    def show_player_text(self, name, score):
+        self.player_text = (name, score)
+        self.resize_background()
 
     # ========================================================
     # ARDUINO CONNECTION
@@ -340,7 +582,7 @@ class GameDisplay:
     # RFID SCAN
     # ========================================================
 
-    def on_scan(self, event=None):
+    def on_scan(self, event=None, uid=None):
 
         print(">>> ENTER PRESSED / SCAN TRIGGERED")
 
@@ -348,11 +590,9 @@ class GameDisplay:
             print(">>> Scan ignored: already processing")
             return
 
-        uid = self.entry.get().strip()
+        uid = (self.scanner_buffer if uid is None else uid).strip()
 
         print(f">>> UID RECEIVED: '{uid}'")
-
-        self.entry.delete(0, tk.END)
 
         if not uid:
             print(">>> UID EMPTY")
@@ -388,74 +628,13 @@ class GameDisplay:
         # ----------------------------------------------------
 
         if uid not in self.cards:
-
-            # Disable RFID input while registration dialog
-            # is open.
-            self.entry.config(
-                state="disabled"
+            self.status_label.config(
+                text=f"Unknown card: {uid}"
             )
-
-            kind = simpledialog.askstring(
-                "New Card",
-                (
-                    f"Card UID:\n\n"
-                    f"{uid}\n\n"
-                    "Enter card type:\n"
-                    "player or task"
-                ),
-                parent=self.root
-            )
-
-            # Re-enable input.
-            self.entry.config(
-                state="normal"
-            )
-
-            # ------------------------------------------------
-            # User cancelled
-            # ------------------------------------------------
-
-            if kind is None:
-
-                self.status_label.config(
-                    text="Card registration cancelled"
-                )
-
-                return
-
-            kind = kind.strip().lower()
-
-            # ------------------------------------------------
-            # Validate type
-            # ------------------------------------------------
-
-            if kind.startswith("p"):
-
-                self.cards[uid] = "player"
-
-            elif kind.startswith("t"):
-
-                self.cards[uid] = "task"
-
-            else:
-
-                messagebox.showwarning(
-                    "Invalid Card Type",
-                    "Please enter either 'player' or 'task'.",
-                    parent=self.root
-                )
-
-                return
-
-            # Save card
-            save_json(
-                CARDS_FILE,
-                self.cards
-            )
-
             print(
-                f"Registered {uid} as {self.cards[uid]}"
+                f"Unknown card UID: {uid}. Add it to {CARDS_FILE.name}."
             )
+            return
 
         # ----------------------------------------------------
         # EXISTING CARD
@@ -485,10 +664,7 @@ class GameDisplay:
         # ----------------------------------------------------
 
         if uid not in self.players:
-
-            self.entry.config(
-                state="disabled"
-            )
+            self.scanner_enabled = False
 
             name = simpledialog.askstring(
                 "New Player",
@@ -500,9 +676,7 @@ class GameDisplay:
                 parent=self.root
             )
 
-            self.entry.config(
-                state="normal"
-            )
+            self.scanner_enabled = True
 
             # User cancelled
             if name is None:
@@ -544,9 +718,17 @@ class GameDisplay:
 
         player = self.players[uid]
 
+        history = player.get("history", [])
+        if history:
+            self.set_era_background(history[-1].get("era"))
+        else:
+            self.clear_era_background()
+
         # ----------------------------------------------------
         # Update UI
         # ----------------------------------------------------
+
+        self.hide_welcome_screen()
 
         self.status_label.config(
             text="Player scanned"
@@ -559,6 +741,8 @@ class GameDisplay:
         self.score_label.config(
             text=f"Score: {player['score']}"
         )
+
+        self.show_player_text(player["name"], player["score"])
 
         self.task_label.config(
             text=""
@@ -714,8 +898,11 @@ class GameDisplay:
             text=f"Task assigned — {era_name}"
         )
 
+        self.set_era_background(era)
+        self.show_task_text(title, description)
+
         self.task_label.config(
-            text=task_text
+            text="" if era == 1 else task_text
         )
 
         # --------------------------------------------------------
