@@ -51,6 +51,13 @@ ERA_IMAGE_FILES = {
     4: Path("era_images/Chola Empire.png"),
     5: Path("era_images/Vijayanagar Empire.png"),
 }
+ERA_TEXT_COLORS = {
+    1: {"header": "#a26431", "cloud": "#f4dfba", "task": "#a26431"},
+    2: {"header": "#dbe6f5", "cloud": "#333657", "task": "#dbe6f5"},
+    3: {"header": "#dcebd6", "cloud": "#325c2a", "task": "#dcebd6"},
+    4: {"header": "#e1bc84", "cloud": "#532116", "task": "#e1bc84"},
+    5: {"header": "#4a4a4a", "cloud": "#f1f1f1", "task": "#4a4a4a"},
+}
 
 # ============================================================
 # TASK DECK
@@ -332,20 +339,10 @@ class GameDisplay:
             ),
             None
         )
-        if era == 1:
-            self.status_label.pack_forget()
-            self.player_label.pack_forget()
-            self.score_label.pack_forget()
-            self.task_label.pack_forget()
-        else:
-            if not self.status_label.winfo_ismapped():
-                self.status_label.pack(pady=(60, 10))
-            if not self.player_label.winfo_ismapped():
-                self.player_label.pack(pady=10)
-            if not self.score_label.winfo_ismapped():
-                self.score_label.pack()
-            if not self.task_label.winfo_ismapped():
-                self.task_label.pack(pady=40)
+        self.status_label.pack_forget()
+        self.player_label.pack_forget()
+        self.score_label.pack_forget()
+        self.task_label.pack_forget()
         self.resize_background()
 
     def clear_era_background(self):
@@ -386,11 +383,17 @@ class GameDisplay:
             print(f"Could not display background image: {error}")
 
     def draw_era_text(self, image):
-        if self.background_source != ERA_IMAGE_FILES[1]:
+        era = next(
+            (era_id for era_id, path in ERA_IMAGE_FILES.items()
+             if path == self.background_source),
+            None
+        )
+        if era is None:
             return
 
         image_width, image_height = image.size
         draw = ImageDraw.Draw(image)
+        colors = ERA_TEXT_COLORS[era]
 
         if self.era_name:
             era_font = self.fit_font(
@@ -403,7 +406,7 @@ class GameDisplay:
                 (round(image_width * 0.50), round(image_height * -0.006)),
                 self.era_name,
                 font=era_font,
-                fill="#532116",
+                fill=colors["header"],
                 anchor="ma"
             )
 
@@ -412,23 +415,23 @@ class GameDisplay:
             name_font = self.fit_font(
                 name,
                 "georgiab.ttf",
-                max(70, image_width // 32),
-                round(image_width * 0.16)
+                max(42, image_width // 48),
+                round(image_width * 0.12)
             )
             score_font = self.load_font("georgia.ttf", max(34, image_width // 72))
             cloud_center_x = round(image_width * 0.50)
             draw.text(
-                (cloud_center_x, round(image_height * 0.23)),
+                (cloud_center_x, round(image_height * 0.26)),
                 name,
                 font=name_font,
-                fill="#f4dfba",
+                fill=colors["cloud"],
                 anchor="ma"
             )
             draw.text(
                 (cloud_center_x, round(image_height * 0.35)),
                 f"Score: {score}",
                 font=score_font,
-                fill="#f4dfba",
+                fill=colors["cloud"],
                 anchor="ma"
             )
 
@@ -450,7 +453,7 @@ class GameDisplay:
             ((left + right) // 2, round(image_height * 0.66)),
             title,
             font=title_font,
-            fill="#532116",
+            fill=colors["task"],
             anchor="ma",
             align="center",
             spacing=8
@@ -459,7 +462,7 @@ class GameDisplay:
             ((left + right) // 2, round(image_height * 0.75)),
             description,
             font=body_font,
-            fill="#532116",
+            fill=colors["task"],
             anchor="ma",
             align="center",
             spacing=6

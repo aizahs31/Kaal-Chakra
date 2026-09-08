@@ -126,6 +126,42 @@
           "amount": 300,
           "currency": "INR"
         }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 8,
+        "title": "Failed Harvest",
+        "description": "The year's harvest is poor.",
+        "effect": {
+          "type": "pay",
+          "amount": 200,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 8,
+        "title": "Failed Harvest",
+        "description": "The year's harvest is poor.",
+        "effect": {
+          "type": "pay",
+          "amount": 200,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 3,
+        "title": "Well-Planned City",
+        "description": "Your efficient city saves construction costs.",
+        "effect": {
+          "type": "collect",
+          "amount": 150,
+          "currency": "INR"
+        }
       }
     ]
   },
@@ -575,6 +611,29 @@
           "type": "pay",
           "amount": 100,
           "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 4,
+        "title": "Bull Seal",
+        "description": "Your seal becomes highly valuable to merchants.",
+        "effect": {
+          "type": "collect",
+          "amount": 100,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 14,
+        "title": "Archaeological Mystery",
+        "description": "You spend time searching for a lost artifact.",
+        "effect": {
+          "type": "skip_turn",
+          "turns": 1
         }
       }
     ]
