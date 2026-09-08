@@ -147,6 +147,32 @@
   "1240076969": {
     "name": "ak",
     "score": 0,
-    "history": []
+    "history": [
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 12,
+        "title": "Trading Expedition",
+        "description": "Take a chance on a distant trade route. Roll a die.",
+        "effect": {
+          "type": "dice",
+          "die": "d6",
+          "outcomes": [
+            {
+              "roll": "4-6",
+              "action": "collect",
+              "amount": 300,
+              "currency": "INR"
+            },
+            {
+              "roll": "1-3",
+              "action": "pay",
+              "amount": 100,
+              "currency": "INR"
+            }
+          ]
+        }
+      }
+    ]
   }
 }

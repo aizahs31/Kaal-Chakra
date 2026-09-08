@@ -121,15 +121,88 @@ class GameDisplay:
         # ----------------------------------------------------
 
         root.title("Kaal-Chakra")
-        root.configure(bg="#2e2e1a")
-        root.geometry("900x600")
+        root.configure(bg="#0d1628")
+        root.geometry("1000x650")
 
         self.background_image = None
         self.background_source = None
-        self.background_label = tk.Label(root, bg="#2e2e1a")
+        self.background_label = tk.Label(root, bg="#0d1628")
         self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
         self.background_label.lower()
         root.bind("<Configure>", self.resize_background)
+
+        # ----------------------------------------------------
+        # Default welcome screen
+        # ----------------------------------------------------
+
+        self.welcome_frame = tk.Frame(
+            root,
+            bg="#111d33",
+            highlightbackground="#c8974b",
+            highlightthickness=1
+        )
+        self.welcome_frame.pack(
+            fill="x",
+            padx=150,
+            pady=(55, 25)
+        )
+
+        tk.Label(
+            self.welcome_frame,
+            text="KAAL-CHAKRA",
+            font=("Georgia", 32, "bold"),
+            fg="#e7bd72",
+            bg="#111d33"
+        ).pack(pady=(28, 2))
+
+        tk.Label(
+            self.welcome_frame,
+            text="BHARAT THROUGH THE AGES",
+            font=("Segoe UI", 11, "bold"),
+            fg="#9fb6c9",
+            bg="#111d33"
+        ).pack()
+
+        tk.Frame(
+            self.welcome_frame,
+            height=1,
+            bg="#6e4b2d"
+        ).pack(fill="x", padx=80, pady=20)
+
+        tk.Label(
+            self.welcome_frame,
+            text="Your journey through history begins here",
+            font=("Georgia", 18, "italic"),
+            fg="#f2e4c7",
+            bg="#111d33"
+        ).pack()
+
+        steps = tk.Frame(self.welcome_frame, bg="#111d33")
+        steps.pack(pady=(22, 28))
+
+        for number, text in (
+            ("1", "Scan your player card"),
+            ("2", "Scan the era card"),
+            ("3", "Complete your task"),
+        ):
+            tk.Label(
+                steps,
+                text=f"{number}  {text}",
+                font=("Segoe UI", 12),
+                fg="#d6c5a5",
+                bg="#111d33",
+                anchor="w",
+                width=25
+            ).pack(side="left", padx=8)
+
+        self.welcome_footer = tk.Label(
+            root,
+            text="RFID READY  •  A NEW CHAPTER AWAITS",
+            font=("Segoe UI", 10, "bold"),
+            fg="#7188a1",
+            bg="#0d1628"
+        )
+        self.welcome_footer.pack(pady=(0, 22))
 
         # ----------------------------------------------------
         # Status
@@ -137,10 +210,10 @@ class GameDisplay:
 
         self.status_label = tk.Label(
             root,
-            text="Scan a player card to begin",
-            font=("Segoe UI", 22),
-            fg="#eaeaea",
-            bg="#1a1a2e"
+            text="Awaiting player card",
+            font=("Segoe UI", 20, "bold"),
+            fg="#f2e4c7",
+            bg="#111d33"
         )
 
         self.status_label.pack(pady=(60, 10))
@@ -152,9 +225,9 @@ class GameDisplay:
         self.player_label = tk.Label(
             root,
             text="",
-            font=("Segoe UI", 48, "bold"),
-            fg="#f5c518",
-            bg="#1a1a2e"
+            font=("Georgia", 42, "bold"),
+            fg="#e7bd72",
+            bg="#111d33"
         )
 
         self.player_label.pack(pady=10)
@@ -166,9 +239,9 @@ class GameDisplay:
         self.score_label = tk.Label(
             root,
             text="",
-            font=("Segoe UI", 20),
-            fg="#aaaaaa",
-            bg="#1a1a2e"
+            font=("Segoe UI", 16),
+            fg="#b9c8d4",
+            bg="#111d33"
         )
 
         self.score_label.pack()
@@ -180,9 +253,9 @@ class GameDisplay:
         self.task_label = tk.Label(
             root,
             text="",
-            font=("Segoe UI", 26),
-            fg="#4ade80",
-            bg="#1a1a2e",
+            font=("Georgia", 22),
+            fg="#e7bd72",
+            bg="#111d33",
             wraplength=800,
             justify="center"
         )
@@ -258,7 +331,7 @@ class GameDisplay:
         if image_path is None or not image_path.exists():
             self.background_source = None
             self.background_image = None
-            self.background_label.config(image="", bg="#2e2e1a")
+            self.background_label.config(image="", bg="#0d1628")
             print(f"No background image found for era {era}: {image_path}")
             return
 
@@ -268,7 +341,11 @@ class GameDisplay:
     def clear_era_background(self):
         self.background_source = None
         self.background_image = None
-        self.background_label.config(image="", bg="#2e2e1a")
+        self.background_label.config(image="", bg="#0d1628")
+
+    def hide_welcome_screen(self):
+        self.welcome_frame.pack_forget()
+        self.welcome_footer.pack_forget()
 
     def resize_background(self, event=None):
         if self.background_source is None:
@@ -534,6 +611,8 @@ class GameDisplay:
         # ----------------------------------------------------
         # Update UI
         # ----------------------------------------------------
+
+        self.hide_welcome_screen()
 
         self.status_label.config(
             text="Player scanned"
