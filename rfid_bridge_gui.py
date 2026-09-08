@@ -30,6 +30,7 @@ from tkinter import simpledialog, messagebox
 from pathlib import Path
 
 import serial
+from PIL import Image, ImageTk
 
 
 # ============================================================
@@ -42,6 +43,13 @@ BAUD_RATE = 9600
 PLAYERS_FILE = Path("players.json")
 CARDS_FILE = Path("cards.json")
 TASK_DECK_FILE = Path("task_cards.json")
+ERA_IMAGE_FILES = {
+    1: Path("era_images/Indus Valley.png"),
+    2: Path("era_images/Mauryan Empire.png"),
+    3: Path("era_images/Gupta Empire.png"),
+    4: Path("era_images/Chola Empire.png"),
+    5: Path("era_images/Vijayanagar Empire.png"),
+}
 
 # ============================================================
 # TASK DECK
@@ -114,7 +122,14 @@ class GameDisplay:
 
         root.title("Kaal-Chakra")
         root.configure(bg="#2e2e1a")
-        root.geometry("900x500")
+        root.geometry("900x600")
+
+        self.background_image = None
+        self.background_source = None
+        self.background_label = tk.Label(root, bg="#2e2e1a")
+        self.background_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.background_label.lower()
+        root.bind("<Configure>", self.resize_background)
 
         # ----------------------------------------------------
         # Status
@@ -236,6 +251,47 @@ class GameDisplay:
 
         except tk.TclError:
             pass
+
+    def set_era_background(self, era):
+        image_path = ERA_IMAGE_FILES.get(era)
+
+        if image_path is None or not image_path.exists():
+            self.background_source = None
+            self.background_image = None
+            self.background_label.config(image="", bg="#2e2e1a")
+            print(f"No background image found for era {era}: {image_path}")
+            return
+
+        self.background_source = image_path
+        self.resize_background()
+
+    def clear_era_background(self):
+        self.background_source = None
+        self.background_image = None
+        self.background_label.config(image="", bg="#2e2e1a")
+
+    def resize_background(self, event=None):
+        if self.background_source is None:
+            return
+
+        try:
+            width = max(self.root.winfo_width(), 1)
+            height = max(self.root.winfo_height(), 1)
+            image = Image.open(self.background_source).convert("RGB")
+
+            scale = max(width / image.width, height / image.height)
+            size = (round(image.width * scale), round(image.height * scale))
+            image = image.resize(size, Image.Resampling.LANCZOS)
+
+            left = (image.width - width) // 2
+            top = (image.height - height) // 2
+            image = image.crop((left, top, left + width, top + height))
+
+            self.background_image = ImageTk.PhotoImage(image)
+            self.background_label.config(image=self.background_image)
+
+        except (OSError, tk.TclError) as error:
+            print(f"Could not display background image: {error}")
 
     # ========================================================
     # ARDUINO CONNECTION
@@ -469,6 +525,12 @@ class GameDisplay:
 
         player = self.players[uid]
 
+        history = player.get("history", [])
+        if history:
+            self.set_era_background(history[-1].get("era"))
+        else:
+            self.clear_era_background()
+
         # ----------------------------------------------------
         # Update UI
         # ----------------------------------------------------
@@ -638,6 +700,8 @@ class GameDisplay:
         self.status_label.config(
             text=f"Task assigned — {era_name}"
         )
+
+        self.set_era_background(era)
 
         self.task_label.config(
             text=task_text
