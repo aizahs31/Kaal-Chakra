@@ -111,6 +111,7 @@ class GameDisplay:
         self.last_player_uid = None
         self.scanner_buffer = ""
         self.scanner_enabled = True
+        self.era_name = None
 
         # Prevent multiple RFID scans from being processed
         # simultaneously.
@@ -323,6 +324,14 @@ class GameDisplay:
 
         self.background_source = image_path
         self.era_text = None
+        self.era_name = next(
+            (
+                card.get("name")
+                for card in self.cards.values()
+                if isinstance(card, dict) and card.get("era") == era
+            ),
+            None
+        )
         if era == 1:
             self.status_label.pack_forget()
             self.player_label.pack_forget()
@@ -344,6 +353,7 @@ class GameDisplay:
         self.background_image = None
         self.era_text = None
         self.player_text = None
+        self.era_name = None
         self.background_label.config(image="", bg="#0d1628")
 
     def hide_welcome_screen(self):
@@ -381,6 +391,21 @@ class GameDisplay:
 
         image_width, image_height = image.size
         draw = ImageDraw.Draw(image)
+
+        if self.era_name:
+            era_font = self.fit_font(
+                self.era_name,
+                "georgiab.ttf",
+                max(45, image_width // 42),
+                round(image_width * 0.55)
+            )
+            draw.text(
+                (round(image_width * 0.50), round(image_height * -0.006)),
+                self.era_name,
+                font=era_font,
+                fill="#532116",
+                anchor="ma"
+            )
 
         if self.player_text is not None:
             name, score = self.player_text

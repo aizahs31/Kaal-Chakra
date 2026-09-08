@@ -482,6 +482,100 @@
           "amount": 200,
           "currency": "INR"
         }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 13,
+        "title": "Granary Supplies",
+        "description": "Your well-stocked granary helps the settlement.",
+        "effect": {
+          "type": "multiple",
+          "actions": [
+            {
+              "type": "collect",
+              "amount": 150,
+              "currency": "INR"
+            },
+            {
+              "type": "move",
+              "spaces": 1,
+              "direction": "forward"
+            }
+          ]
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 11,
+        "title": "Master Craftsman",
+        "description": "Your craftsmanship attracts wealthy traders.",
+        "effect": {
+          "type": "collect",
+          "amount": 250,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 3,
+        "title": "Well-Planned City",
+        "description": "Your efficient city saves construction costs.",
+        "effect": {
+          "type": "collect",
+          "amount": 150,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 12,
+        "title": "Trading Expedition",
+        "description": "Take a chance on a distant trade route. Roll a die.",
+        "effect": {
+          "type": "dice",
+          "die": "d6",
+          "outcomes": [
+            {
+              "roll": "4-6",
+              "action": "collect",
+              "amount": 300,
+              "currency": "INR"
+            },
+            {
+              "roll": "1-3",
+              "action": "pay",
+              "amount": 100,
+              "currency": "INR"
+            }
+          ]
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 14,
+        "title": "Archaeological Mystery",
+        "description": "You spend time searching for a lost artifact.",
+        "effect": {
+          "type": "skip_turn",
+          "turns": 1
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 9,
+        "title": "Cracked Pottery",
+        "description": "Your valuable pottery shipment breaks.",
+        "effect": {
+          "type": "pay",
+          "amount": 100,
+          "currency": "INR"
+        }
       }
     ]
   }
