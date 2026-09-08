@@ -109,6 +109,8 @@ class GameDisplay:
         self.era_decks = {}
 
         self.last_player_uid = None
+        self.scanner_buffer = ""
+        self.scanner_enabled = True
 
         # Prevent multiple RFID scans from being processed
         # simultaneously.
@@ -267,39 +269,9 @@ class GameDisplay:
 
         self.task_label.pack(pady=40)
 
-        # ----------------------------------------------------
-        # RFID input
-        # ----------------------------------------------------
-        #
-        # The RFID reader behaves like a keyboard.
-        #
-        # Example:
-        #
-        #   RFID scans:
-        #       0755599857
-        #
-        #   Reader sends:
-        #       0755599857 + Enter
-        #
-        # ----------------------------------------------------
-
-        self.entry = tk.Entry(
-            root,
-            font=("Segoe UI", 12)
-        )
-
-        # Keep the keyboard capture active without showing a text box.
-        self.entry.place(
-            x=-10,
-            y=-10,
-            width=1,
-            height=1
-        )
-
-        self.entry.bind(
-            "<Return>",
-            self.on_scan
-        )
+        # RFID readers act like keyboards, so capture their UID globally
+        # without creating a visible input widget.
+        root.bind_all("<KeyPress>", self.on_keypress)
 
         # Initial focus
         self.root.after(
@@ -323,12 +295,21 @@ class GameDisplay:
     def focus_scanner(self):
 
         try:
-            self.entry.config(state="normal")
-            self.entry.focus_set()
-            self.entry.icursor(tk.END)
+            self.root.focus_force()
 
         except tk.TclError:
             pass
+
+    def on_keypress(self, event):
+        if not self.scanner_enabled:
+            return
+
+        if event.keysym == "Return":
+            uid = self.scanner_buffer
+            self.scanner_buffer = ""
+            self.on_scan(uid=uid)
+        elif event.char and event.char.isprintable():
+            self.scanner_buffer += event.char
 
     def set_era_background(self, era):
         image_path = ERA_IMAGE_FILES.get(era)
@@ -343,13 +324,19 @@ class GameDisplay:
         self.background_source = image_path
         self.era_text = None
         if era == 1:
+            self.status_label.pack_forget()
             self.player_label.pack_forget()
             self.score_label.pack_forget()
+            self.task_label.pack_forget()
         else:
+            if not self.status_label.winfo_ismapped():
+                self.status_label.pack(pady=(60, 10))
             if not self.player_label.winfo_ismapped():
                 self.player_label.pack(pady=10)
             if not self.score_label.winfo_ismapped():
                 self.score_label.pack()
+            if not self.task_label.winfo_ismapped():
+                self.task_label.pack(pady=40)
         self.resize_background()
 
     def clear_era_background(self):
@@ -567,7 +554,7 @@ class GameDisplay:
     # RFID SCAN
     # ========================================================
 
-    def on_scan(self, event=None):
+    def on_scan(self, event=None, uid=None):
 
         print(">>> ENTER PRESSED / SCAN TRIGGERED")
 
@@ -575,11 +562,9 @@ class GameDisplay:
             print(">>> Scan ignored: already processing")
             return
 
-        uid = self.entry.get().strip()
+        uid = (self.scanner_buffer if uid is None else uid).strip()
 
         print(f">>> UID RECEIVED: '{uid}'")
-
-        self.entry.delete(0, tk.END)
 
         if not uid:
             print(">>> UID EMPTY")
@@ -651,10 +636,7 @@ class GameDisplay:
         # ----------------------------------------------------
 
         if uid not in self.players:
-
-            self.entry.config(
-                state="disabled"
-            )
+            self.scanner_enabled = False
 
             name = simpledialog.askstring(
                 "New Player",
@@ -666,9 +648,7 @@ class GameDisplay:
                 parent=self.root
             )
 
-            self.entry.config(
-                state="normal"
-            )
+            self.scanner_enabled = True
 
             # User cancelled
             if name is None:

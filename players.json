@@ -436,6 +436,52 @@
           "amount": 100,
           "currency": "INR"
         }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 1,
+        "title": "The Great Bath",
+        "description": "Take a ceremonial bath before continuing your journey.",
+        "effect": {
+          "type": "move",
+          "spaces": 2,
+          "direction": "forward"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 15,
+        "title": "Prosperous Harappa",
+        "description": "Your settlement enters a period of prosperity.",
+        "effect": {
+          "type": "choice",
+          "options": [
+            {
+              "type": "collect",
+              "amount": 300,
+              "currency": "INR"
+            },
+            {
+              "type": "move",
+              "spaces": 3,
+              "direction": "forward"
+            }
+          ]
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 8,
+        "title": "Failed Harvest",
+        "description": "The year's harvest is poor.",
+        "effect": {
+          "type": "pay",
+          "amount": 200,
+          "currency": "INR"
+        }
       }
     ]
   }
