@@ -423,26 +423,31 @@ class GameDisplay:
         if self.era_text is None:
             return
 
-        left = round(image_width * 0.51)
-        right = round(image_width * 0.94)
-        title_font = self.load_font("georgiab.ttf", max(22, round(image_width * 0.035)))
-        body_font = self.load_font("georgia.ttf", max(16, round(image_width * 0.021)))
-        title = textwrap.fill(self.era_text[0], width=22)
-        description = textwrap.fill(self.era_text[1], width=38)
+        left = round(image_width * 0.13)
+        right = round(image_width * 0.87)
+        title_font = self.fit_font(
+            self.era_text[0],
+            "georgiab.ttf",
+            max(22, round(image_width * 0.028)),
+            round(image_width * 0.63)
+        )
+        body_font = self.load_font("georgia.ttf", max(16, round(image_width * 0.018)))
+        title = textwrap.fill(self.era_text[0], width=30)
+        description = textwrap.fill(self.era_text[1], width=58)
         draw.multiline_text(
-            ((left + right) // 2, round(image_height * 0.27)),
+            ((left + right) // 2, round(image_height * 0.66)),
             title,
             font=title_font,
-            fill="#e1bc84",
+            fill="#532116",
             anchor="ma",
             align="center",
             spacing=8
         )
         draw.multiline_text(
-            ((left + right) // 2, round(image_height * 0.43)),
+            ((left + right) // 2, round(image_height * 0.75)),
             description,
             font=body_font,
-            fill="#f4dfba",
+            fill="#532116",
             anchor="ma",
             align="center",
             spacing=6

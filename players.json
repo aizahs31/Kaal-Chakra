@@ -412,6 +412,30 @@
             }
           ]
         }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 9,
+        "title": "Cracked Pottery",
+        "description": "Your valuable pottery shipment breaks.",
+        "effect": {
+          "type": "pay",
+          "amount": 100,
+          "currency": "INR"
+        }
+      },
+      {
+        "era": 1,
+        "era_name": "Indus Valley Civilization",
+        "card_id": 4,
+        "title": "Bull Seal",
+        "description": "Your seal becomes highly valuable to merchants.",
+        "effect": {
+          "type": "collect",
+          "amount": 100,
+          "currency": "INR"
+        }
       }
     ]
   }
